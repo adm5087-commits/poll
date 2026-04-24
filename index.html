@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextGen LBM Live Poll</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #060d1f;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .screen { display: none; flex-direction: column; align-items: center; text-align: center; }
+  .screen.active { display: flex; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes pop { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid #0a1a3a;
+    border-top: 3px solid #00d4ff;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin-bottom: 2rem;
+  }
+
+  .logo {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #00d4ff;
+    margin-bottom: 2.5rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-label {
+    font-size: 13px;
+    color: #7ba8c4;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+  }
+
+  .status-text {
+    font-size: 15px;
+    color: #00d4ff;
+    min-height: 24px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  .bar-track {
+    width: 260px;
+    height: 4px;
+    background: #0d1f3a;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #7b61ff);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .tags {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border: 1px solid #1a3a5c;
+    border-radius: 20px;
+    color: #7b61ff;
+  }
+
+  .session-id {
+    font-size: 11px;
+    color: #2a4a6a;
+    letter-spacing: 2px;
+  }
+
+  /* REVEAL SCREEN */
+  .reveal-wrap {
+    animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 380px;
+    width: 100%;
+  }
+
+  .reveal-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    color: #111;
+  }
+
+  .reveal-emoji {
+    font-size: 64px;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .reveal-title {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 0.5rem;
+  }
+
+  .reveal-sub {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .instruction-box {
+    background: #f4f8ff;
+    border: 2px dashed #c0d4f0;
+    border-radius: 14px;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .instruction-step {
+    font-family: Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a3a6a;
+    margin-bottom: 0.5rem;
+  }
+
+  .instruction-desc {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #446;
+    line-height: 1.5;
+  }
+
+  .hand-diagram {
+    margin: 1rem auto;
+    display: block;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: #185FA5;
+    background: #e6f1fb;
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div class="screen active" id="screen-loading">
+  <div class="logo">NEXTGEN LBM &nbsp;|&nbsp; LIVE SESSION</div>
+  <div class="spinner"></div>
+  <div class="status-label">SYSTEM STATUS</div>
+  <div class="status-text" id="status-text">Initializing secure connection...</div>
+  <div class="bar-track"><div class="bar-fill" id="bar"></div></div>
+  <div class="tags">
+    <span class="tag">ENCRYPTED</span>
+    <span class="tag">REAL-TIME</span>
+    <span class="tag">LIVE</span>
+  </div>
+  <div class="session-id" id="session-id">SESSION ID: --</div>
+</div>
+
+<!-- REVEAL SCREEN -->
+<div class="screen" id="screen-reveal">
+  <div class="reveal-wrap">
+    <div class="reveal-card">
+      <div class="reveal-title">Live Polling</div>
+      <div class="reveal-sub">See instructions below.</div>
+
+      <div class="instruction-box">
+        <div class="instruction-step">Step 1</div>
+        <div class="instruction-desc">Look up from your phone.</div>
+        <div style="font-size: 52px; margin: 0.75rem 0;">&#128241;</div>
+        <div style="font-size: 13px; color: #888; font-family: Arial, sans-serif; margin-bottom: 0.25rem;">&#8595; set it down &#8595;</div>
+      </div>
+
+      <div class="instruction-box" style="margin-top: 1rem;">
+        <div class="instruction-step">Step 2</div>
+        <div class="instruction-desc">Raise your hand when you wish to vote.</div>
+        <div style="font-size: 52px; margin: 0.75rem 0;">&#9995;</div>
+        <div style="border-top: 1px dashed #c0d4f0; margin: 0.75rem 0;"></div>
+        <div class="instruction-desc">Do not raise your hand.</div>
+        <div style="font-size: 52px; margin: 0.75rem 0;">&#128528;</div>
+      </div>
+
+      <span class="badge">POWERED BY A.D. MOYER IT TEAM</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const steps = [
+    { text: "Initializing secure connection...", pct: 8 },
+    { text: "Locating session host...", pct: 18 },
+    { text: "Authenticating device...", pct: 29 },
+    { text: "Syncing with room network...", pct: 41 },
+    { text: "Loading poll engine v4.2.1...", pct: 54 },
+    { text: "Connecting to live database...", pct: 65 },
+    { text: "Calibrating response latency...", pct: 74 },
+    { text: "Registering anonymous session...", pct: 83 },
+    { text: "Almost ready...", pct: 92 },
+    { text: "Launching poll interface...", pct: 100 },
+  ];
+
+  const sessionId = "NGL-" + Math.random().toString(36).substring(2,6).toUpperCase() + "-" + Math.floor(Math.random()*9000+1000);
+  document.getElementById("session-id").textContent = "SESSION ID: " + sessionId;
+
+  const bar = document.getElementById("bar");
+  const statusText = document.getElementById("status-text");
+
+  let i = 0;
+  function runStep() {
+    if (i >= steps.length) {
+      setTimeout(() => {
+        document.getElementById("screen-loading").classList.remove("active");
+        document.getElementById("screen-reveal").classList.add("active");
+      }, 600);
+      return;
+    }
+    const s = steps[i];
+    statusText.style.opacity = 0;
+    setTimeout(() => {
+      statusText.textContent = s.text;
+      statusText.style.transition = "opacity 0.3s";
+      statusText.style.opacity = 1;
+      bar.style.width = s.pct + "%";
+      i++;
+      setTimeout(runStep, 700 + Math.random() * 400);
+    }, 200);
+  }
+
+  runStep();
+</script>
+</body>
+</html>
